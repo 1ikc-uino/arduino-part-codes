@@ -1,0 +1,100 @@
+ultraSonic sensor is used to measure distance
+it has an simplie code 
+----------------------------------------------------------------------------------------------------------------------------------------
+1)
+#include <Wire.h>
+#include "rgb_lcd.h"
+#include "Ultrasonic.h"
+
+// LCD declaration
+rgb_lcd lcd;
+
+// Ultrasonic sensor connected to D7
+Ultrasonic ultrasonic(7);
+
+void setup()
+{
+    // LCD initialization
+    lcd.begin(16, 2);
+
+    // Display title
+    lcd.setCursor(0, 0);
+    lcd.print("MEASURE :");
+}
+
+void loop()
+{
+    long distance_mm;
+    float distance_m;
+
+    // Read distance in millimeters
+    distance_mm = ultrasonic.MeasureInCentimeters() * 10;
+
+    // Convert to meters
+    distance_m = distance_mm / 1000.0;
+
+    // Clear second line
+    lcd.setCursor(0, 1);
+    lcd.print("                ");
+
+    // Display result
+    lcd.setCursor(0, 1);
+    lcd.print(distance_m);
+    lcd.print(" m");
+
+    delay(1000);
+}
+----------------------------------------------------------------------------------------------------------------------------------------
+And for showing the result in mm
+
+#include <Wire.h>
+#include "rgb_lcd.h"
+#include "Ultrasonic.h"
+
+// LCD declaration
+rgb_lcd lcd;
+
+// Ultrasonic sensor declaration
+Ultrasonic ultrasonic(7);
+
+void setup()
+{
+    lcd.begin(16, 2);
+
+    lcd.setCursor(0, 0);
+    lcd.print("MEASURE :");
+}
+
+void loop()
+{
+    long distance_mm;
+    float distance_m;
+
+    // Read distance in millimeters
+    distance_mm = ultrasonic.MeasureInCentimeters() * 10;
+
+    // Convert to meters
+    distance_m = distance_mm / 1000.0;
+
+    // Clear second line
+    lcd.setCursor(0, 1);
+    lcd.print("                ");
+
+    lcd.setCursor(0, 1);
+
+    // Automatic unit selection
+    if(distance_mm >= 1000)
+    {
+        lcd.print(distance_m);
+        lcd.print(" m");
+    }
+    else
+    {
+        lcd.print(distance_mm);
+        lcd.print(" mm");
+    }
+
+    delay(1000);
+}
+
+
