@@ -1,0 +1,55 @@
+This programme is to detect how much times u passed the captor
+-----------------------------------------------------------------------------------------------------------------------------------------
+#include <Wire.h>
+#include "rgb_lcd.h"
+
+// LCD declaration
+rgb_lcd lcd;
+
+// Infrared sensor pin
+const int sensorPin = 2;
+
+// Counter variable
+int counter = 0;
+
+// Variable to detect state change
+int previousState = HIGH;
+
+void setup()
+{
+    // LCD initialization
+    lcd.begin(16, 2);
+
+    // Sensor configuration
+    pinMode(sensorPin, INPUT_PULLUP);
+
+    // First line
+    lcd.setCursor(0, 0);
+    lcd.print("COUNTING :");
+}
+
+void loop()
+{
+    // Read sensor state
+    int barrierState = digitalRead(sensorPin);
+
+    // Detect barrier interruption
+    if(barrierState == LOW && previousState == HIGH)
+    {
+        counter++;
+    }
+
+    // Save previous state
+    previousState = barrierState;
+
+    // Clear second line
+    lcd.setCursor(0, 1);
+    lcd.print("                ");
+
+    // Display counter
+    lcd.setCursor(4, 1);
+    lcd.print(counter);
+    lcd.print(" PASSES");
+
+    delay(200);
+}
