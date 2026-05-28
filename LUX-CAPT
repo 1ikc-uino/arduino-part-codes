@@ -1,0 +1,43 @@
+For lux captor show the value on the screen
+------------------------------------------------------------------------------------------------------------------------------------
+#include <Wire.h>
+#include "rgb_lcd.h"
+
+// LCD declaration
+rgb_lcd lcd;
+
+// Light sensor pin
+const int p_captor = A0;
+
+void setup()
+{
+    // LCD initialization
+    lcd.begin(16, 2);
+}
+void loop()
+{
+    // Read sensor value
+    int grossvalue = analogRead(p_captor);
+    // First line
+    lcd.setCursor(0, 0);
+    lcd.print("LIGHT :");
+
+    // Clear second line
+    lcd.setCursor(0, 1);
+    lcd.print("                ");
+
+    // Second line display
+    lcd.setCursor(4, 1);
+    lcd.print(grossvalue);
+    lcd.print(" LUX");
+
+    delay(1000);
+}
+
+
+
+
+
+
+
+
