@@ -16,29 +16,29 @@ For void setup
 void setup()
 {
     lcd.begin(16, 2);
-    pinMode(bouton1, INPUT_PULLUP);
-    pinMode(bouton2, INPUT_PULLUP);
+    pinMode(button1, INPUT_PULLUP);
+    pinMode(button2, INPUT_PULLUP);
     lcd.setCursor(0, 0);
     lcd.print("       ");
 }
 void loop()
 {
     // Read button states if it is high or low
-    int etatBouton1 = digitalRead(bouton1);
-    int etatBouton2 = digitalRead(bouton2);
+    int stateButton1 = digitalRead(Button1);
+    int stateButton2 = digitalRead(Button2);
     // Clear line 0
     lcd.setCursor(0, 0);
     lcd.print("                ");
 
     // If button 2 is pressed type "Cupcake"
-    if (etatBouton1 == LOW)
+    if (stateButton1 == LOW)
     {
         lcd.setCursor(0, 0);
         lcd.print("Cupcake");
     }
 
     // If button 2 is pressed type "Cookie"
-    else if (etatBouton2 == LOW)
+    else if (stateButton2 == LOW)
     {
         lcd.setCursor(0, 0);
         lcd.print("Cookie");
@@ -58,42 +58,42 @@ void loop()
 first for decaration u have to add
 
 // Variable to store the current letter
-char lettre = 'a';
+char letter = 'a';
 // Variable to remember the previous button state
-int ancienEtat = HIGH;
+int formerState = HIGH;
 
 for void setup
 void setup()
 {
     lcd.begin(16, 2);
-    pinMode(bouton, INPUT_PULLUP); // the button entrance
+    pinMode(button, INPUT_PULLUP); // the button entrance
     lcd.setCursor(7, 0); // the positon of the word "letter"
     lcd.print(letter);
 }
 for void loop
 void loop()
 {
-    int etatBouton = digitalRead(bouton);
+    int formerState = digitalRead(bouton);
 
     // Detect a new button press with AND fonction
-    if (etatBouton == LOW && ancienEtat == HIGH)
+    if (formerState == LOW && ancienEtat == HIGH)
     {
         // Move to the next letter
-        lettre++;
+        letter++;
 
         // After z, go back to a
-        if (lettre > 'z')
+        if (letter > 'z')
         {
-            lettre = 'a';
+            letter = 'a';
         }
         // Type the letter in the screen
         lcd.setCursor(7, 0);
-        lcd.print(lettre);
+        lcd.print(letter);
 
         delay(200); // debounce delay
     }
     // Save current state for next loop
-    ancienEtat = etatBouton;
+    formerState = stateBouton;
 }
 
 ----------------------------------------------------------------------------------------------------------------------------------------
@@ -103,27 +103,62 @@ After pressing the push button again, the display will resume from the beginning
 
 for declaration 
 // Current letter
-char lettre = 'A';
+char letter = 'A';
 
 // Previous button state
-int ancienEtat = HIGH;
+int formerstate = HIGH;
 
 // Variable to know if display is finished
-bool fin = false;
+bool end = false;
 
-for void setup 
-void setup()
+for void setup it is the same
+
+for void loop
+void loop()
 {
-    lcd.begin(16, 2);
+    // Read button state
+    int stateBouton = digitalRead(button);
+    // Detect button press with fonction AND
+    if (stateBouton == LOW && ancienEtat == HIGH)
+    {
+        // If finish is displayed
+        if (end == true)
+        {
+            // Restart from A
+            end = false;
+            lettre = 'A';
+            lcd.clear();
+            lcd.setCursor(12, 0);
+            lcd.print(letter);
+        }
+        else
+        {
+            // type end on lcd.screen
+            end = true;
+            lcd.clear();
+            lcd.setCursor(6, 0);
+            lcd.print("END");
+        }
 
-    // Configure button with internal pull-up resistor
-    pinMode(bouton, INPUT_PULLUP);
+        delay(200); // debounce
+    }
 
-    // Initial display
-    lcd.setCursor(12, 0); // 13th character
-    lcd.print(lettre);
+    // If not finished, continue alphabet scrolling
+    if (end == false)
+    {
+        lcd.setCursor(12, 0);
+        lcd.print(lettre);
+        delay(500);
+        lettre++;
+        // Stop after Z
+        if (lettre > 'Z')
+        {
+            lettre = 'Z';
+        }
+    }
+    // Save current button state
+    ancienEtat = etatBouton;
 }
-
 
 
 
