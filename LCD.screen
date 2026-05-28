@@ -1,0 +1,7 @@
+Here am gonna explain to u how to LCD I2C screen and u gonna see few exemples it can help u.
+----------------------------------------------------------------------------------------------------------------------------------------
+1) The library command where u have to start the code with it as declaration command
+#include <Wire.h>
+#include "rgb_lcd.h"
+rgb_lcd lcd;
+----------------------------------------------------------------------------------------------------------------------------------------
