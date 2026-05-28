@@ -1,0 +1,79 @@
+for the POTENTIOMETER it can control the voltage sent to other parts
+the programme is not hard
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+#include <Wire.h>
+#include "rgb_lcd.h"
+
+// LCD declaration
+rgb_lcd lcd;
+int adcPin = A0;      // Potentiometer connected to A0
+int adcIn = 0;        // Variable for analog value
+float voltage = 0;    // Variable for voltage
+void setup()
+{
+    // LCD initialization
+    lcd.begin(16, 2);
+    // Title display
+    lcd.setCursor(0, 0);
+    lcd.print("POTENTIOMETER");
+}
+
+void loop()
+{
+    // Read analog value
+    adcIn = analogRead(adcPin);
+    // Convert to voltage (0V to 5V)
+    voltage = adcIn * 5.0 / 1023.0;
+    // Clear second line
+    lcd.setCursor(0, 1);
+    lcd.print("                ");
+    // Display voltage
+    lcd.setCursor(4, 1);
+    lcd.print(voltage);
+    lcd.print(" V");
+    delay(100);
+}
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+this is how to show the result on the lcd screen
+
+#include <Wire.h>
+#include "rgb_lcd.h"
+rgb_lcd lcd;
+int adcPin = A0;       
+int buttonPin = 2;   
+int adcIn = 0;
+float voltage = 0;
+int millivoltage = 0;
+void setup()
+{
+    lcd.begin(16, 2);
+    pinMode(buttonPin, INPUT);
+    lcd.setCursor(0, 0);
+    lcd.print("POTENTIOMETER");
+}
+
+void loop()
+{
+    // Read potentiometer
+    adcIn = analogRead(adcPin);
+    // Convert values
+    voltage = adcIn * 5.0 / 1023.0;
+    millivoltage = voltage * 1000;
+    // Clear second line
+    lcd.setCursor(0, 1);
+    lcd.print("                ");
+    lcd.setCursor(4, 1);
+    // Button control
+    if(digitalRead(buttonPin) == HIGH)
+    {
+        lcd.print(millivoltage);
+        lcd.print(" mV");
+    }
+    else
+    {
+        lcd.print(voltage);
+        lcd.print(" V");
+    }
+
+    delay(100);
+}
