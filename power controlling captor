@@ -1,0 +1,41 @@
+power controlling captor wit the lcd.screen
+--------------------------------------------------------------------------------------------------------------------------------
+#include <Wire.h>
+#include "rgb_lcd.h"
+
+// LCD declaration
+rgb_lcd lcd;
+
+// MOSFET control pin
+const int mosfetPin = 3;
+
+void setup()
+{
+    // LCD initialization
+    lcd.begin(16, 2);
+
+    // Configure pin as output
+    pinMode(mosfetPin, OUTPUT);
+}
+
+void loop()
+{
+    // Turn power ON
+    digitalWrite(mosfetPin, HIGH);
+
+    lcd.setCursor(0, 0);
+    lcd.print("POWER :");
+
+    lcd.setCursor(4, 1);
+    lcd.print("100 %");
+
+    delay(2000);
+
+    // Turn power OFF
+    digitalWrite(mosfetPin, LOW);
+
+    lcd.setCursor(4, 1);
+    lcd.print("  0 %");
+
+    delay(2000);
+}
