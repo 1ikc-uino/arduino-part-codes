@@ -1,0 +1,60 @@
+Non-contact thermometer with lcd
+---------------------------------------------------------------------------------------------------------------------------------------
+#include <Wire.h>
+#include "rgb_lcd.h"
+#include <DFRobot_MLX90614.h>
+
+// LCD declaration
+rgb_lcd lcd;
+
+ sensor address
+#define MLX90614_I2C_ADDR 0x5A
+
+// Sensor object
+DFRobot_MLX90614_I2C sensor(MLX90614_I2C_ADDR, &Wire);
+
+void setup()
+{
+    Serial.begin(115200);
+
+    // LCD initialization
+    lcd.begin(16, 2);
+
+    // Sensor initialization
+    while(NO_ERR != sensor.begin())
+    {
+        lcd.setCursor(0, 0);
+        lcd.print("SENSOR ERROR");
+        delay(3000);
+    }
+
+    sensor.setEmissivityCorrectionCoefficient(1.0);
+    sensor.setI2CAddress(0x5A);
+    sensor.setMeasuredParameters(sensor.eIIR100, sensor.eFIR1024);
+
+    lcd.clear();
+}
+
+void loop()
+{
+    // Read object temperature in Celsius
+    float tempC = sensor.getObjectTempCelsius();
+
+    // Convert Celsius to Fahrenheit
+    float tempF = (tempC * 9.0 / 5.0) + 32.0;
+
+    // First line
+    lcd.setCursor(0, 0);
+    lcd.print("TEMPERATURE:");
+
+    // Clear second line
+    lcd.setCursor(0, 1);
+    lcd.print("                ");
+
+    // Display temperature
+    lcd.setCursor(4, 1);
+    lcd.print(tempF);
+    lcd.print(" F");
+
+    delay(500);
+}
