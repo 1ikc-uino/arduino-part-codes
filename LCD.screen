@@ -5,3 +5,129 @@ Here am gonna explain to u how to LCD I2C screen and u gonna see few exemples it
 #include "rgb_lcd.h"
 rgb_lcd lcd;
 ----------------------------------------------------------------------------------------------------------------------------------------
+2) The commands that u have to know for void setup
+    lcd.begin(16, 2); // the command lcd.screen is 2x16 
+    lcd.setCursor(0, 0); // this command is for position of the word
+    lcd.print("Hello Word"); // type "hello Word"
+----------------------------------------------------------------------------------------------------------------------------------------
+3) here am gonna show u an exemple for how to use the lcd.screen with button
+here we got a code of 2 button if we press button 1 it gonna type "Cupcake" on the screen and if we press button 2 it gonna type "Cookie".
+For void setup
+void setup()
+{
+    lcd.begin(16, 2);
+    pinMode(bouton1, INPUT_PULLUP);
+    pinMode(bouton2, INPUT_PULLUP);
+    lcd.setCursor(0, 0);
+    lcd.print("       ");
+}
+void loop()
+{
+    // Read button states if it is high or low
+    int etatBouton1 = digitalRead(bouton1);
+    int etatBouton2 = digitalRead(bouton2);
+    // Clear line 0
+    lcd.setCursor(0, 0);
+    lcd.print("                ");
+
+    // If button 2 is pressed type "Cupcake"
+    if (etatBouton1 == LOW)
+    {
+        lcd.setCursor(0, 0);
+        lcd.print("Cupcake");
+    }
+
+    // If button 2 is pressed type "Cookie"
+    else if (etatBouton2 == LOW)
+    {
+        lcd.setCursor(0, 0);
+        lcd.print("Cookie");
+    }
+    //if nothing pressed type nothing. U can change it for what ever u want
+    else
+    {
+        lcd.setCursor(0, 0);
+        lcd.print("     ");
+    }
+
+    delay(100);
+}
+----------------------------------------------------------------------------------------------------------------------------------------
+4) Now am gonna show u how add alphabet variable for lcd.screen
+
+first for decaration u have to add
+
+// Variable to store the current letter
+char lettre = 'a';
+// Variable to remember the previous button state
+int ancienEtat = HIGH;
+
+for void setup
+void setup()
+{
+    lcd.begin(16, 2);
+    pinMode(bouton, INPUT_PULLUP); // the button entrance
+    lcd.setCursor(7, 0); // the positon of the word "letter"
+    lcd.print(letter);
+}
+for void loop
+void loop()
+{
+    int etatBouton = digitalRead(bouton);
+
+    // Detect a new button press with AND fonction
+    if (etatBouton == LOW && ancienEtat == HIGH)
+    {
+        // Move to the next letter
+        lettre++;
+
+        // After z, go back to a
+        if (lettre > 'z')
+        {
+            lettre = 'a';
+        }
+        // Type the letter in the screen
+        lcd.setCursor(7, 0);
+        lcd.print(lettre);
+
+        delay(200); // debounce delay
+    }
+    // Save current state for next loop
+    ancienEtat = etatBouton;
+}
+
+----------------------------------------------------------------------------------------------------------------------------------------
+In this program, we want to display the entire uppercase alphabet on the first line, starting at the 13th character, following the format
+shown below. The display will stop after the letter "Z". After pressing the push button, the message "END" will appear in the middle of the screen.
+After pressing the push button again, the display will resume from the beginning.
+
+for declaration 
+// Current letter
+char lettre = 'A';
+
+// Previous button state
+int ancienEtat = HIGH;
+
+// Variable to know if display is finished
+bool fin = false;
+
+for void setup 
+void setup()
+{
+    lcd.begin(16, 2);
+
+    // Configure button with internal pull-up resistor
+    pinMode(bouton, INPUT_PULLUP);
+
+    // Initial display
+    lcd.setCursor(12, 0); // 13th character
+    lcd.print(lettre);
+}
+
+
+
+
+
+
+
+
