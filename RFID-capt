@@ -1,0 +1,87 @@
+RFID-capt code with lcd.screen
+------------------------------------------------------------------------------------------------------------------------------------
+
+#include <SPI.h>
+#include <MFRC522.h>
+#include <Wire.h>
+#include "rgb_lcd.h"
+
+// LCD declaration
+rgb_lcd lcd;
+
+// RFID pins
+const byte RST_PIN = 9;
+const byte SS_PIN  = 10;
+
+// RFID object
+MFRC522 mfrc522(SS_PIN, RST_PIN);
+
+// Variables
+String uid = "";
+
+// Authorized badge UID
+String valid_uid = "12 ab 34 cd";
+
+void setup()
+{
+    Serial.begin(9600);
+
+    // SPI initialization
+    SPI.begin();
+
+    // RFID initialization
+    mfrc522.PCD_Init();
+
+    // LCD initialization
+    lcd.begin(16, 2);
+
+    lcd.setCursor(0, 0);
+    lcd.print("STATUS :");
+}
+
+void loop()
+{
+    // Detect RFID tag
+    if (mfrc522.PICC_IsNewCardPresent())
+    {
+        if (mfrc522.PICC_ReadCardSerial())
+        {
+            uid = "";
+
+            // Read UID
+            for (byte i = 0; i < mfrc522.uid.size; i++)
+            {
+                uid.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
+                uid.concat(String(mfrc522.uid.uidByte[i], HEX));
+            }
+
+            uid = uid.substring(1);
+
+            // Clear second line
+            lcd.setCursor(0, 1);
+            lcd.print("                ");
+
+            // Compare UID
+            if (uid == valid_uid)
+            {
+                lcd.setCursor(1, 1);
+                lcd.print("ACCESS GRANTED");
+            }
+            else
+            {
+                lcd.setCursor(1, 1);
+                lcd.print("ACCESS DENIED");
+            }
+
+            delay(2000);
+        }
+    }
+}
+
+
+
+
+
+
+
+
