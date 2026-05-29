@@ -1,0 +1,153 @@
+lux captor with lcd screen 
+----------------------------------------------------------------------------------------------------------------------
+#include <Wire.h>
+#include "rgb_lcd.h"
+
+rgb_lcd lcd;
+
+const int sensorPin = A0; // GT1107 sensor
+const int ledPin = 13;    // Built-in LED
+
+void setup() {
+
+  // LCD initialization
+  lcd.begin(16, 2);
+
+  // LED configuration
+  pinMode(ledPin, OUTPUT);
+
+  // First message
+  lcd.setCursor(0, 0);
+  lcd.print("LIGHT SENSOR");
+}
+
+void loop() {
+
+  // Read sensor value
+  int luxValue = analogRead(sensorPin);
+
+  // Darkness detected
+  if (luxValue < 300) {
+
+    lcd.clear();
+
+    lcd.setCursor(0, 0);
+    lcd.print("NIGHT");
+
+    lcd.setCursor(0, 1);
+    lcd.print("LED ON");
+
+    digitalWrite(ledPin, HIGH);
+  }
+
+  // Strong light detected
+  else if (luxValue > 700) {
+
+    lcd.clear();
+
+    lcd.setCursor(0, 0);
+    lcd.print("DAY");
+
+    lcd.setCursor(0, 1);
+    lcd.print("LED OFF");
+
+    digitalWrite(ledPin, LOW);
+  }
+
+  // Normal ambient light
+  else {
+
+    lcd.clear();
+
+    lcd.setCursor(0, 0);
+    lcd.print("NORMAL LIGHT");
+
+    lcd.setCursor(0, 1);
+    lcd.print("LED OFF");
+
+    digitalWrite(ledPin, LOW);
+  }
+
+  delay(200);
+}
+-----------------------------------------------------------------------------------------------------------------------------------
+with servo motor 
+#include <Wire.h>
+#include "rgb_lcd.h"
+#include <Servo.h>
+
+rgb_lcd lcd;
+Servo myServo;
+
+const int sensorPin = A0; // GT1107 light sensor
+const int ledPin = 13;    // Built-in LED
+const int servoPin = 9;   // Servo motor pin
+
+void setup() {
+
+  // LCD initialization
+  lcd.begin(16, 2);
+
+  // LED configuration
+  pinMode(ledPin, OUTPUT);
+
+  // Servo initialization
+  myServo.attach(servoPin);
+  myServo.write(0); // Initial position
+
+  // LCD welcome message
+  lcd.setCursor(0, 0);
+  lcd.print("LIGHT SENSOR");
+}
+
+void loop() {
+
+  // Read light sensor value
+  int luxValue = analogRead(sensorPin);
+
+  // Darkness detected
+  if (luxValue < 300) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("NIGHT");
+    lcd.setCursor(0, 1);
+    lcd.print("LED ON");
+    // Turn LED ON
+    digitalWrite(ledPin, HIGH);
+
+    // Turn servo to 90°
+    myServo.write(90);
+  }
+
+  // Strong light detected
+  else if (luxValue > 700) {
+
+    lcd.clear();
+
+    lcd.setCursor(0, 0);
+    lcd.print("DAY");
+
+    lcd.setCursor(0, 1);
+    lcd.print("LED OFF");
+
+    // Turn LED OFF
+    digitalWrite(ledPin, LOW);
+
+    // Return servo to 0°
+    myServo.write(0);
+  }
+
+  // Normal ambient light
+  else {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("NORMAL LIGHT");
+    lcd.setCursor(0, 1);
+    lcd.print("SERVO OFF");
+    // LED OFF
+    digitalWrite(ledPin, LOW);
+    // Servo OFF position
+    myServo.write(0);
+  }
+  delay(200);
+}
