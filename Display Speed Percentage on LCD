@@ -1,0 +1,99 @@
+Display Speed Percentage on LCD
+-------------------------------------------------------------------------------------------------------------------------
+#include <Servo.h>
+#include <Wire.h>
+#include "rgb_lcd.h"
+
+Servo myServo;
+rgb_lcd lcd;
+
+const int potPin = A0; // Potentiometer pin
+
+void setup() {
+
+    // Servo initialization
+    myServo.attach(3);
+
+    // LCD initialization
+    lcd.begin(16, 2);
+}
+
+void loop() {
+
+    // Read potentiometer value
+    int potValue = analogRead(potPin);
+
+    // Convert value to servo angle
+    int servoSpeed = map(potValue, 0, 1023, 0, 180);
+
+    // Move servo motor
+    myServo.write(servoSpeed);
+
+    // Convert value to percentage
+    int percentage = map(potValue, 0, 1023, 0, 100);
+
+    // LCD display
+    lcd.setCursor(0, 0);
+    lcd.print("VITESSE :");
+
+    lcd.setCursor(5, 1);
+    lcd.print(percentage);
+    lcd.print("%   ");
+
+    delay(200);
+}
+------------------------------------------------------------------------------------------------------------------------------------
+
+#include <Servo.h>
+#include <Wire.h>
+#include "rgb_lcd.h"
+
+Servo myServo;
+rgb_lcd lcd;
+
+const int potPin = A0;
+
+void setup() {
+
+    // Servo initialization
+    myServo.attach(3);
+
+    // LCD initialization
+    lcd.begin(16, 2);
+}
+
+void loop() {
+
+    // Read potentiometer value
+    int potValue = analogRead(potPin);
+
+    // Convert value to servo angle
+    int servoPosition = map(potValue, 0, 1023, 0, 180);
+
+    // Move servo motor
+    myServo.write(servoPosition);
+
+    // LCD first line
+    lcd.setCursor(0, 0);
+    lcd.print("STATUS :");
+
+    // Determine direction
+    lcd.setCursor(4, 1);
+
+    if (potValue < 400) {
+
+        lcd.print("ARRIERE   ");
+    }
+
+    else if (potValue > 600) {
+
+        lcd.print("AVANT     ");
+    }
+
+    else {
+
+        lcd.print("STOP      ");
+    }
+
+    delay(200);
+}
