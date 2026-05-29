@@ -1,0 +1,196 @@
+keypad with numbers if the code is right type on screen ACCESS VALID if not type ACCESS REFUSED
+--------------------------------------------------------------------------------------------------------------------------------
+#include <Keypad.h>
+#include <Wire.h>
+#include "rgb_lcd.h"
+
+rgb_lcd lcd;
+
+const byte ROWS = 4;
+const byte COLS = 3;
+
+// Keypad layout
+char keys[ROWS][COLS] = {
+  {'1','2','3'},
+  {'4','5','6'},
+  {'7','8','9'},
+  {'*','0','#'}
+};
+
+// Arduino pins
+byte rowPins[ROWS] = {8, 7, 6, 5};
+byte colPins[COLS] = {4, 3, 2};
+
+// Create keypad
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+
+// Secret code
+String secretCode = "1234";
+
+// Variable to store typed code
+String enteredCode = "";
+
+void setup() {
+
+    lcd.begin(16, 2);
+
+    lcd.setCursor(0, 0);
+    lcd.print("CODE:");
+}
+
+void loop() {
+
+    char key = keypad.getKey();
+
+    // If a key is pressed
+    if (key) {
+
+        // Display typed key
+        lcd.setCursor(0, 1);
+        lcd.print("                ");
+
+        enteredCode += key;
+
+        lcd.setCursor(0, 1);
+        lcd.print(enteredCode);
+
+        delay(300);
+
+        // Check when 4 digits are entered
+        if (enteredCode.length() == 4) {
+
+            lcd.clear();
+
+            // Correct code
+            if (enteredCode == secretCode) {
+
+                lcd.setCursor(1, 1);
+                lcd.print("ACCESS VALID");
+            }
+
+            // Wrong code
+            else {
+
+                lcd.setCursor(1, 1);
+                lcd.print("ACCESS REFUSED");
+            }
+
+            delay(2000);
+
+            // Reset screen
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("CODE:");
+
+            // Clear entered code
+            enteredCode = "";
+        }
+    }
+}
+--------------------------------------------------------------------------------------------------------------------------------
+  this programme is for the servo motor
+  
+#include <Keypad.h>
+#include <Wire.h>
+#include "rgb_lcd.h"
+#include <Servo.h>
+
+rgb_lcd lcd;
+Servo myServo;
+
+const byte ROWS = 4;
+const byte COLS = 3;
+
+// Keypad layout
+char keys[ROWS][COLS] = {
+  {'1','2','3'},
+  {'4','5','6'},
+  {'7','8','9'},
+  {'*','0','#'}
+};
+
+// Arduino pins
+byte rowPins[ROWS] = {8, 7, 6, 5};
+byte colPins[COLS] = {4, 3, 2};
+
+// Create keypad
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+
+// Servo pin
+const int servoPin = 9;
+
+// Secret code
+String secretCode = "1234";
+
+// Variable to store entered code
+String enteredCode = "";
+
+void setup() {
+
+    lcd.begin(16, 2);
+
+    // Servo initialization
+    myServo.attach(servoPin);
+    myServo.write(0); // Initial position
+
+    // LCD message
+    lcd.setCursor(0, 0);
+    lcd.print("CODE:");
+}
+
+void loop() {
+
+    char key = keypad.getKey();
+
+    // If a key is pressed
+    if (key) {
+
+        // Add key to code
+        enteredCode += key;
+
+        // Display entered code
+        lcd.setCursor(0, 1);
+        lcd.print("                ");
+
+        lcd.setCursor(0, 1);
+        lcd.print(enteredCode);
+
+        delay(300);
+
+        // Check after 4 digits
+        if (enteredCode.length() == 4) {
+
+            lcd.clear();
+
+            // Correct code
+            if (enteredCode == secretCode) {
+
+                lcd.setCursor(1, 1);
+                lcd.print("ACCESS VALID");
+
+                // Turn servo motor
+                myServo.write(90); // Open position
+                delay(2000);
+
+                myServo.write(0); // Close position
+            }
+
+            // Wrong code
+            else {
+
+                lcd.setCursor(1, 1);
+                lcd.print("ACCESS REFUSED");
+            }
+
+            delay(2000);
+
+            // Reset LCD
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("CODE:");
+
+            // Clear code
+            enteredCode = "";
+        }
+    }
+}
