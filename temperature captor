@@ -1,0 +1,145 @@
+the temperature captor convert the temperature into voltage 10mV=1°C
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+#include <Wire.h>
+#include "rgb_lcd.h"
+
+rgb_lcd lcd;
+
+const int sensorPin = A0; // LM35 sensor pin
+
+void setup() {
+    lcd.begin(16, 2); // Initialize 16x2 LCD
+}
+
+void loop() {
+
+    int reading = analogRead(sensorPin); // Read analog value
+    float voltage = reading * (5.0 / 1023.0); // Convert to voltage
+    float temperature = voltage * 100.0; // LM35: 10mV = 1°C
+
+    lcd.setCursor(0, 0);
+    lcd.print("TEMPERATURE:");
+
+    lcd.setCursor(4, 1);
+    lcd.print(temperature, 1); // Display 1 decimal
+
+    lcd.write((unsigned char)223); // Degree symbol °
+    lcd.print("C");
+
+    delay(1000); // Wait 1 second
+}
+--------------------------------------------------------------------------------------------------------------------------------------------
+if temperature > 27 turn on motor. The motor could be a fan
+
+#include <Wire.h>
+#include "rgb_lcd.h"
+
+rgb_lcd lcd;
+
+const int sensorPin = A0;   // LM35 sensor pin
+const int motorPin = 7;     // Motor control pin
+
+void setup() {
+
+    lcd.begin(16, 2);       // Initialize LCD
+    pinMode(motorPin, OUTPUT);
+
+    digitalWrite(motorPin, LOW); // Motor OFF at start
+}
+
+void loop() {
+
+    int reading = analogRead(sensorPin); // Read sensor value
+
+    float voltage = reading * (5.0 / 1023.0); // Convert to voltage
+
+    float temperature = voltage * 100.0; // Convert to Celsius
+
+    // Display temperature
+    lcd.setCursor(0, 0);
+    lcd.print("TEMPERATURE:");
+
+    lcd.setCursor(4, 1);
+    lcd.print(temperature, 1);
+
+    lcd.write((unsigned char)223); // Degree symbol °
+    lcd.print("C");
+
+    // Motor control
+    if (temperature > 27.0) {
+
+        digitalWrite(motorPin, HIGH); // Turn motor ON
+
+        lcd.setCursor(12, 1);
+        lcd.print("ON ");
+
+    } else {
+
+        digitalWrite(motorPin, LOW); // Turn motor OFF
+
+        lcd.setCursor(12, 1);
+        lcd.print("OFF");
+    }
+
+    delay(1000); // Wait 1 second
+}
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+programme for servo motor. When temp > 27 turn on servomotor
+
+#include <Wire.h>
+#include "rgb_lcd.h"
+#include <Servo.h>
+
+rgb_lcd lcd;
+Servo myServo;
+
+const int sensorPin = A0;   // LM35 sensor pin
+const int servoPin = 9;     // Servo motor pin
+
+void setup() {
+
+    lcd.begin(16, 2);       // Initialize LCD
+
+    myServo.attach(servoPin); // Attach servo motor
+    myServo.write(0);         // Initial position
+
+}
+
+void loop() {
+
+    int reading = analogRead(sensorPin); // Read sensor value
+
+    float voltage = reading * (5.0 / 1023.0); // Convert to voltage
+
+    float temperature = voltage * 100.0; // Convert to Celsius
+
+    // Display temperature
+    lcd.setCursor(0, 0);
+    lcd.print("TEMPERATURE:");
+
+    lcd.setCursor(4, 1);
+    lcd.print(temperature, 1);
+
+    lcd.write((unsigned char)223); // Degree symbol °
+    lcd.print("C ");
+
+    // Servo motor control
+    if (temperature > 27.0) {
+
+        myServo.write(90); // Rotate servo to 90°
+
+        lcd.setCursor(12, 1);
+        lcd.print("ON ");
+
+    } else {
+
+        myServo.write(0); // Return servo to 0°
+
+        lcd.setCursor(12, 1);
+        lcd.print("OFF");
+    }
+
+    delay(1000); // Wait 1 second
+}
