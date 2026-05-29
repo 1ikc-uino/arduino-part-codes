@@ -53,3 +53,77 @@ void loop()
 
     delay(200);
 }
+-------------------------------------------------------------------------------------------------------------------
+When a person passes in front of the infrared sensor the counter increases by 1, the servo motor rotates to 90°
+After 1 second, the servo returns to 0°
+
+#include <Wire.h>
+#include "rgb_lcd.h"
+#include <Servo.h>
+
+// LCD declaration
+rgb_lcd lcd;
+
+// Servo declaration
+Servo myServo;
+
+// Infrared sensor pin
+const int sensorPin = 2;
+
+// Servo motor pin
+const int servoPin = 9;
+
+// Counter variable
+int counter = 0;
+
+// Variable to detect state change
+int previousState = HIGH;
+
+void setup()
+{
+    // LCD initialization
+    lcd.begin(16, 2);
+
+    // Sensor configuration
+    pinMode(sensorPin, INPUT_PULLUP);
+
+    // Servo initialization
+    myServo.attach(servoPin);
+    myServo.write(0); // Initial position
+
+    // First line
+    lcd.setCursor(0, 0);
+    lcd.print("COUNTING :");
+}
+
+void loop()
+{
+    // Read sensor state
+    int barrierState = digitalRead(sensorPin);
+
+    // Detect barrier interruption
+    if(barrierState == LOW && previousState == HIGH)
+    {
+        counter++;
+
+        // Turn servo motor
+        myServo.write(90); // Rotate to 90°
+        delay(1000);
+
+        myServo.write(0); // Return to 0°
+    }
+
+    // Save previous state
+    previousState = barrierState;
+
+    // Clear second line
+    lcd.setCursor(0, 1);
+    lcd.print("                ");
+
+    // Display counter
+    lcd.setCursor(2, 1);
+    lcd.print(counter);
+    lcd.print(" PASSES");
+
+    delay(200);
+}
